@@ -39,7 +39,7 @@ def preprocess_text(input_path, output_path):
 if __name__ == "__main__":
     # File paths for Alice in Wonderland
     input_file = "data/raw/alice.txt"
-    output_file = "data/processed/alice_paragraphs.csv"
+    output_file = "data/processed/alice_segments.csv"
 
     # Preprocess text
     preprocess_text(input_file, output_file)
