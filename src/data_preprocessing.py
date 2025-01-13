@@ -3,10 +3,12 @@ import re
 import pandas as pd
 import nltk
 
+nltk.download('punkt')
 
 def preprocess_text(input_path, output_path):
     """
-    Preprocesses text files by segmenting into paragraphs and cleaning extraneous characters.
+    Preprocesses text files by segmenting into paragraphs, cleaning extraneous characters, 
+    and removing chapter headers (e.g., 'CHAPTER').
     Args:
         input_path (str): Path to the raw text file.
         output_path (str): Path to save the processed CSV file.
@@ -17,11 +19,17 @@ def preprocess_text(input_path, output_path):
     # Split text into paragraphs based on double newlines
     paragraphs = text.split('\n\n')
 
-    # Clean paragraphs to remove unwanted patterns
-    cleaned_paragraphs = [
-        re.sub(r'[^\w\s.,!?\'"-]', '', paragraph.strip())  # Remove extraneous characters
-        for paragraph in paragraphs if paragraph.strip()  # Exclude empty paragraphs
-    ]
+    # Clean and filter paragraphs
+    cleaned_paragraphs = []
+    for paragraph in paragraphs:
+        paragraph = paragraph.strip()
+        # Skip paragraphs that start with "CHAPTER" or similar
+        if re.match(r'^CHAPTER\b', paragraph, re.IGNORECASE):
+            continue
+        # Remove extraneous characters and add to the cleaned list
+        cleaned_paragraph = re.sub(r'[^\w\s.,!?\'"-]', '', paragraph)
+        if cleaned_paragraph:  # Exclude empty paragraphs
+            cleaned_paragraphs.append(cleaned_paragraph)
 
     # Save as a DataFrame
     df = pd.DataFrame({'paragraphs': cleaned_paragraphs})
