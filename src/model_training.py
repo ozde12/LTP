@@ -1,5 +1,6 @@
 from transformers import T5Tokenizer, T5ForConditionalGeneration, Trainer, TrainingArguments
 import datasets
+import sentencepiece
 
 def train_model():
     # Load tokenizer and model
@@ -7,7 +8,7 @@ def train_model():
     model = T5ForConditionalGeneration.from_pretrained("google/flan-t5-large")
     
     # Load dataset
-    dataset = datasets.load_dataset("data/processed/book_segments.csv")
+    dataset = datasets.load_dataset("data/processed/alice_segments.csv")
     
     # Tokenize dataset
     def preprocess_function(examples):
