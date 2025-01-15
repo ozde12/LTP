@@ -29,7 +29,7 @@ def preprocess_text(input_path, output_path):
         if re.match(r'^CHAPTER\b', paragraph, re.IGNORECASE):
             continue
         # Remove extraneous characters
-        cleaned_paragraph = re.sub(r'[^\w\s.,!?\'"-]', '', paragraph)
+        cleaned_paragraph = re.sub(r'[^\w\s.,!?\'"-_]', '', paragraph)
         if cleaned_paragraph:  # Exclude empty paragraphs
             cleaned_paragraphs.append(cleaned_paragraph)
             # Generate a question based on the first sentence
