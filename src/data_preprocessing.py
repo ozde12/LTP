@@ -31,15 +31,19 @@ def preprocess_text(input_path, output_path):
         if cleaned_paragraph:  # Exclude empty paragraphs
             cleaned_paragraphs.append(cleaned_paragraph)
 
-    # Save as a DataFrame
-    df = pd.DataFrame({'paragraphs': cleaned_paragraphs})
+    # Add dummy "target text" for fine-tuning T5
+    df = pd.DataFrame({
+        'source_text': cleaned_paragraphs,
+        'target_text': ["Summarize this paragraph."] * len(cleaned_paragraphs)  # Placeholder task
+    })
+
     df.to_csv(output_path, index=False)
     print(f"Processed text saved to {output_path}")
 
 if __name__ == "__main__":
     # File paths for Alice in Wonderland
     input_file = "data/raw/alice.txt"
-    output_file = "data/processed/alice_segments.csv"
+    output_file = "data/processed/alicesegments.csv"
 
     # Preprocess text
     preprocess_text(input_file, output_file)
