@@ -1,7 +1,7 @@
 import re
 
 # File paths
-input_file_path = r"C:\Users\ozdep\Documents\ltp final project\LTP\data\raw\trial.txt"
+input_file_path = r"C:\Users\ozdep\Documents\ltp final project\LTP\data\raw\alice.txt"
 output_file_path = r"C:\Users\ozdep\Documents\ltp final project\LTP\data\processed\cleaned_text.csv"
 
 # Function to clean the file and process text

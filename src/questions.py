@@ -24,7 +24,7 @@ data = []
 # Generate questions for each paragraph
 for index, paragraph in enumerate(paragraphs):
     questions = question_generator(
-        f"generate subjective question: {paragraph}",
+        f"Write an open-enden question that requires a personal opinion: {paragraph}",
         max_length=300,
         num_return_sequences=1,
         clean_up_tokenization_spaces=True
