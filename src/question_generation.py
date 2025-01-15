@@ -28,8 +28,7 @@ def generate_subjective_questions(input_texts, model_path="outputs/model_checkpo
 if __name__ == "__main__":
     # Example input texts
     input_texts = [
-        "Mr. Dursley noticed a cat reading a map. He blinked and looked again, but there was no map in sight.",
-        "Harry Potter discovered he was a wizard and would be attending Hogwarts School of Witchcraft and Wizardry."
+        "The Gryphon sat up and rubbed its eyes: then it watched the Queen till she was out of sight: then it chuckled. “What fun!” said the Gryphon, half to itself, half to Alice."
     ]
 
     # Generate questions
