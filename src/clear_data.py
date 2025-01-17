@@ -30,8 +30,8 @@ def process_text_file(input_path, output_path):
                 continue
 
             # Detect dialogues (lines that start and end with quotes or include common dialogue keywords)
-            if re.match(r'^".*"$', cleaned_line) or re.search(r'\b(said|replied|asked|exclaimed|shouted)\b', cleaned_line, re.IGNORECASE):
-                is_dialogue = True
+            #if re.match(r'^".*"$', cleaned_line) or re.search(r'\b(said|replied|asked|exclaimed|shouted)\b', cleaned_line, re.IGNORECASE):
+                #is_dialogue = True
 
             # Add non-empty lines to the current paragraph
             if cleaned_line:
