@@ -1,38 +1,12 @@
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-def generate_subjective_questions(input_texts, model_path="outputs/model_checkpoints"):
-    """
-    Generates subjective questions from input texts using the fine-tuned model.
-    
-    Args:
-        input_texts (list): A list of input text segments.
-        model_path (str): Path to the fine-tuned model.
+model_path = "./trained_model"
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 
-    Returns:
-        list: Generated subjective questions.
-    """
-    # Load tokenizer and fine-tuned model
-    tokenizer = T5Tokenizer.from_pretrained(model_path)
-    model = T5ForConditionalGeneration.from_pretrained(model_path)
-
-    # Tokenize input texts
-    inputs = tokenizer(input_texts, return_tensors="pt", padding=True, truncation=True, max_length=512)
-
-    # Generate questions
-    outputs = model.generate(inputs.input_ids, max_length=64, num_beams=5, early_stopping=True)
-
-    # Decode generated questions
-    questions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
-    return questions
-
-if __name__ == "__main__":
-    # Example input texts
-    input_texts = [
-        "The Gryphon sat up and rubbed its eyes: then it watched the Queen till she was out of sight: then it chuckled. “What fun!” said the Gryphon, half to itself, half to Alice."
-    ]
-
-    # Generate questions
-    questions = generate_subjective_questions(input_texts)
-    for i, question in enumerate(questions):
-        print(f"Input {i + 1}: {input_texts[i]}")
-        print(f"Generated Question {i + 1}: {question}\n")
+# Example: let's test generating a question from a new snippet
+input_text = """There might be some sense in your knocking,” the Footman went on without attending to her, “if we had the door between us. For instance, if you were nside,you might knock, and I could let you out, you know.” He was looking up into the sky all the time he was speaking, and this Alice thought decidedly uncivil. “But perhaps he can’t help it,” she said to herself; “his eyes are so ery early at the top of his head. But at any rate he might answer questions.—How am I to get in?” she repeated, aloud."""
+inputs = tokenizer(input_text, return_tensors="pt")
+output_ids = model.generate(**inputs, max_new_tokens=50)
+question = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+print("Generated question:", question)
