@@ -15,13 +15,13 @@ def train_model():
     # 3. Create a train/test split
     train_test_split = dataset['train'].train_test_split(test_size=0.2, seed=42)
     train_ds = train_test_split["train"]
-    test_ds  = train_test_split["test"]
+    test_ds = train_test_split["test"]
 
     # 4. Define preprocessing function
     def preprocess_function(examples):
         inputs = examples["source-text"]
         targets = examples["target-text"]
-        
+
         # Tokenize inputs
         model_inputs = tokenizer(
             inputs,
@@ -31,27 +31,35 @@ def train_model():
         )
         
         # Tokenize targets
-        labels = tokenizer(
-            text_target=targets,
-            max_length=64,
-            truncation=True,
-            padding="max_length"
-        )
+        with tokenizer.as_target_tokenizer():  # Ensures proper target tokenization
+            labels = tokenizer(
+                targets,
+                max_length=64,
+                truncation=True,
+                padding="max_length"
+            )
         
         # Assign labels to model inputs
         model_inputs["labels"] = labels["input_ids"]
         
+        # Debug: Print tokenization results
+        print(f"Input Text: {inputs}")
+        print(f"Tokenized Input IDs: {model_inputs['input_ids']}")
+        print(f"Target Text: {targets}")
+        print(f"Tokenized Target IDs: {labels['input_ids']}")
+        print("-" * 80)
+
         # Debug: Check if labels contain all padding
-        if all(label == tokenizer.pad_token_id for label in model_inputs["labels"]):
+        if all(label == tokenizer.pad_token_id for label in labels["input_ids"]):
             print(f"Warning: Label contains only padding for input: {inputs}")
-        
+
         return model_inputs
 
     # 5. Tokenize datasets
     tokenized_train = train_ds.map(preprocess_function, batched=True)
-    tokenized_test  = test_ds.map(preprocess_function, batched=True)
+    tokenized_test = test_ds.map(preprocess_function, batched=True)
 
-    # 6. Define training arguments with additional safeguards
+    # 6. Define training arguments
     training_args = TrainingArguments(
         output_dir="outputs/model_checkpoints",
         evaluation_strategy="steps",
@@ -73,37 +81,18 @@ def train_model():
         report_to="none"  # Disable external logging for simplicity
     )
 
-    # 7. Add a custom TrainerCallback to debug gradients and loss
-    from transformers import TrainerCallback
-
-    class DebugCallback(TrainerCallback):
-        def on_log(self, args, state, control, logs=None, **kwargs):
-            if logs:
-                print(f"Step {state.global_step}: {logs}")
-
-        def on_step_end(self, args, state, control, model=None, **kwargs):
-            # Log gradient norms
-            for name, param in model.named_parameters():
-                if param.grad is not None:
-                    grad_norm = param.grad.data.norm(2).item()
-                    if grad_norm != grad_norm:  # Check for NaN
-                        print(f"NaN detected in gradient for parameter: {name}")
-                    else:
-                        print(f"Grad norm for {name}: {grad_norm}")
-
-    # 8. Initialize Trainer with DebugCallback
+    # 7. Initialize Trainer
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=tokenized_train,
-        eval_dataset=tokenized_test,
-        callbacks=[DebugCallback()]
+        eval_dataset=tokenized_test
     )
 
-    # 9. Train model
+    # 8. Train model
     trainer.train()
 
-    # 10. Save final model and tokenizer
+    # 9. Save final model and tokenizer
     trainer.save_model("outputs/final_model")
     tokenizer.save_pretrained("outputs/final_model")
 
