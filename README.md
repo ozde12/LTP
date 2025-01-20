@@ -1,11 +1,11 @@
 # Subjective Question Generation for Narrative Texts
 
-This project focuses on generating subjective questions from narrative texts, using Lewis Carroll's *Alice in Wonderland* as the primary dataset. The project extends the capabilities of "Opinerium," which fine-tunes the Flan-T5-large model to generate questions that elicit opinions, interpretations, and personal reflections.
+This project focuses on generating subjective questions from narrative texts, using Lewis Carroll's *Alice in Wonderland* as the primary dataset. The project uses the Flan-T5-small model to generate questions that elicit opinions, interpretations, and personal reflections.
 
 ### Goals
 - Generate high-quality subjective questions from literary texts.
 - Make model be able to handle narrative text challenges such as complex plots, varied styles, and character development.
-- Evaluate the model using both traditional metrics (e.g., BLEU, ROUGE) and semantic metrics (e.g., BERTScore).
+- Evaluate the model using traditional metrics BLEU, ROUGE and semantic metrics BERTScore.
 
 ### Features
 - Fine-tuned Flan-T5 model.
@@ -26,7 +26,7 @@ pip install -r requirements.txt
 Run the following script to preprocess the raw text data:
 
 ```bash
-python LTP/src/data_preprocessing.py
+python LTP/src/clean_data.py
 ```
 This script cleans the text from *Alice in Wonderland* and prepares it in CSV format for training.
 
@@ -64,28 +64,9 @@ This generates the evaluation metrics (e.g., BLEU, ROUGE, BERTScore) and saves a
 | ROUGE-L F1     | 0.3613 |
 | BERTScore F1   | 0.6179 |
 
-### Visual Representation
-See `evaluation_metrics.png` for a bar plot visualizing the metric scores.
-
----
 
 ## Key Files
 
-- **`data_preprocessing.py`**: Prepares the text data for training.
-- **`model_training.py`**: Fine-tunes the Flan-T5-large model.
+- **`clean_data.py`**: Prepares the text data for training.
+- **`model_training.py`**: Fine-tunes the Flan-T5-small model.
 - **`evaluation.py`**: Evaluates the model and generates metrics.
-
----
-
-## Future Work
-- Expand the dataset to include other narrative texts.
-- Implement multilingual subjective question generation.
-- Explore alternative transformer models for comparative analysis.
-
----
-
-## Citation
-If you use this repository, please cite:
-
-```plaintext
-Babakhani, P., Lommatzsch, A., Brodt, T., et al. (2024). "Opinerium: Subjective Question Generation using Large Language Models." IEEE Access.
