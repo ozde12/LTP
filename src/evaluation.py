@@ -8,27 +8,22 @@ from transformers import (
 from evaluate import load
 
 def main():
-    model_path = "./trained_model"  # Where you saved your fine-tuned model
+    model_path = "./trained_model"
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
-    model.eval()  # set to eval mode
+    model.eval()
 
-    # If you have a GPU, move model to GPU (optional)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    # For example, read the same CSV as before and do the same
-    # train/test split. Here we assume the .csv has "source-text" and "target-text"
     df = pd.read_csv("data/processed/alicesegments.csv")
 
-    # Let's pretend you only want to evaluate on 10% of the data:
-    # or if you have a separate test subset, load that
     dataset = Dataset.from_pandas(df)
-    dataset_split = dataset.train_test_split(test_size=0.1, seed=42)
+    dataset_split = dataset.train_test_split(test_size=0.2, seed=42)
     test_dataset = dataset_split["test"]
 
     sources = test_dataset["source-text"]
-    references = test_dataset["target-text"]  # gold questions
+    references = test_dataset["target-text"]
 
     # generate predictions
     predictions = []
@@ -52,22 +47,18 @@ def main():
 
 
 
-    # For BLEU, references need to be a list-of-lists
     references_for_bleu = [[r] for r in references]
 
-    # compute BLEU
     bleu_results = bleu_metric.compute(
         predictions=predictions,
         references=references_for_bleu
     )
 
-    # compute ROUGE
     rouge_results = rouge_metric.compute(
         predictions=predictions,
         references=references
     )
 
-    # compute BERTScore
     bertscore_results = bertscore_metric.compute(
         predictions=predictions,
         references=references,

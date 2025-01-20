@@ -7,3 +7,5 @@ pandas
 nltk
 sentencepiece
 torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+evaluate
+re

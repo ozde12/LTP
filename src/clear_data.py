@@ -1,6 +1,5 @@
 import re
 
-# File paths
 input_file_path = r"C:\Users\ozdep\Documents\ltp final project\LTP\data\raw\alice.txt"
 output_file_path = r"C:\Users\ozdep\Documents\ltp final project\LTP\data\processed\cleaned_text.csv"
 
@@ -55,5 +54,4 @@ def process_text_file(input_path, output_path):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-# Clean and process the file
 process_text_file(input_file_path, output_file_path)

@@ -10,18 +10,14 @@ from transformers import (
 
 def main():
     df = pd.read_csv("data/processed/alicesegments.csv")
-    # Ensure it has columns "source-text" and "target-text"
-
-    # The CSV columns are "source-text" (prompt context) and "target-text" (desired question).
-    # We'll rename them to something consistent if you like:
+    
     dataset = Dataset.from_pandas(df)
-
     dataset = dataset.train_test_split(test_size=0.1, seed=42)
 
     train_dataset = dataset["train"]
     eval_dataset  = dataset["test"]
 
-    model_name = "t5-small"  # You can also try "t5-base", "google/flan-t5-small", etc.
+    model_name = "t5-small"
     
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
@@ -30,13 +26,13 @@ def main():
     max_target_length = 128
 
     def preprocess_function(examples):
-        # tokenize the input (the text from "source-text")
+        # tokenize the input
         model_inputs = tokenizer(
             examples["source-text"], 
             max_length=max_source_length, 
             truncation=True
         )
-        # tokenize the target (the text from "target-text")
+        # tokenize the target
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(
                 examples["target-text"], 
@@ -51,8 +47,7 @@ def main():
     tokenized_eval  = eval_dataset.map(preprocess_function,  batched=True)
 
 
-    # data collator will dynamically pad inputs and labels to the
-    # longest sequence in the batch, so no need to pad them all to max_length.
+    # data collator will dynamically pad inputs and labels to the longest sequence in the batch
     data_collator = DataCollatorForSeq2Seq(
         tokenizer=tokenizer,
         model=model
@@ -81,7 +76,6 @@ def main():
 
     trainer.train()
 
-    # save the model
     trainer.save_model("./trained_model")
     tokenizer.save_pretrained("./trained_model")
 
