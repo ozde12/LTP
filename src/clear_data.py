@@ -13,7 +13,6 @@ def process_text_file(input_path, output_path):
         cleaned_text = []
         current_paragraph = []
         skip_next_line = False
-        is_dialogue = False
 
         for line in lines:
             # Remove unnecessary characters like * and _
@@ -29,23 +28,14 @@ def process_text_file(input_path, output_path):
                 skip_next_line = False
                 continue
 
-            # Detect dialogues (lines that start and end with quotes or include common dialogue keywords)
-            #if re.match(r'^".*"$', cleaned_line) or re.search(r'\b(said|replied|asked|exclaimed|shouted)\b', cleaned_line, re.IGNORECASE):
-                #is_dialogue = True
-
             # Add non-empty lines to the current paragraph
             if cleaned_line:
                 current_paragraph.append(cleaned_line)
             else:
                 # Save the completed paragraph or dialogue block
                 if current_paragraph:
-                    if is_dialogue:
-                        # Group dialogue lines into one block
-                        cleaned_text.append([' '.join(current_paragraph)])
-                        is_dialogue = False
-                    else:
                         cleaned_text.append(current_paragraph)
-                    current_paragraph = []
+                        current_paragraph = []
 
         # Add the last paragraph if it exists
         if current_paragraph:
